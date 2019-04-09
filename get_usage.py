@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# By Apie, sept 2018
 import os
 import requests
 import datetime
@@ -31,17 +32,17 @@ now = datetime.datetime.now()
 token = get_valid_token(now)
 if not token:
   response = session.post(LOGIN_URL, json=dict(grant_type='password', username=USER_NAME, password=PASSWORD))
-  assert response.status_code == 200
+  response.raise_for_status()
   token = response.json()['access_token']
   expires = response.json()['.expires']
   save_in_db(token, datetime.datetime(*parsedate(expires)[:6]))
   print('logged in')
 response = session.get(USAGE_API_URL, headers={'sso-token': token})
-assert response.status_code == 200
+response.raise_for_status()
 usage_data = response.json()
 
 data_today = usage_data['week'][0]
-assert data_today['date'] == now.strftime('%Y-%m-%d')
 
 print('Data vandaag')
 pprint.pprint(data_today)
+assert data_today['date'] == now.strftime('%Y-%m-%d')
