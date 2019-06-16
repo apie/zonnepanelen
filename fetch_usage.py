@@ -40,17 +40,8 @@ def fetch_usage():
     response.raise_for_status()
     return response.json()
 
-def fetch_usage_today():
+def fetch_current_usage():
     data_today = fetch_usage()['week'][0]
     assert data_today['date'] == datetime.date.today().strftime('%Y-%m-%d')
     return data_today
 
-# Todo move this
-def print_usage_today():
-    import pprint
-    data_today = fetch_usage_today()
-    print('Data vandaag')
-    pprint.pprint(data_today)
-
-if __name__ == '__main__':
-    print_usage_today()
