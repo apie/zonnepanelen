@@ -1,25 +1,45 @@
 #!/usr/bin/env python3
 # By Apie, jun 2019
-import os
-from pydblite import Base
-from save_usage import save_weekday_usage
 from fetch_usage import fetch_current_usage
 from operator import itemgetter
+from zonnepanelen_dbs import db_m, db_c, db_d
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-db = Base(os.path.join(SCRIPT_DIR, 'usage.db'))
-db.create('date', 'usage', mode="open")
+DATE_COL_LEN = 20
+USAGE_COL_LEN = 10
+USAGE_COL_H_LEN = USAGE_COL_LEN + 5
 
-def list_usage():
-    for day in sorted(db, key=itemgetter('date')):
+def list_month_usage():
+    for day in sorted(db_m, key=itemgetter('date')):
         netto = day['usage']['accumulatedConsumption'] - day['usage']['accumulatedProduction']
-        print('{} Netto usage: {:.0f} kWh'.format(day['date'], netto))
+        print('{:<{dfill}} {:>{ufill}.0f} kWh'.format(
+            day['date'].strftime('%Y-%m'), netto,
+            dfill=DATE_COL_LEN, ufill=USAGE_COL_LEN,
+        ))
 
-def print_current_usage():
-    import pprint
-    data_today = fetch_current_usage()
-    print('Current data')
-    pprint.pprint(data_today)
+def list_day_usage():
+    for day in sorted(db_d, key=itemgetter('date')):
+        netto = day['usage']['accumulatedConsumption'] - day['usage']['accumulatedProduction']
+        print('{:<{dfill}} {:>{ufill}.0f} kWh'.format(
+            day['date'].strftime('%Y-%m-%d'), netto,
+            dfill=DATE_COL_LEN, ufill=USAGE_COL_LEN,
+        ))
+
+def list_current_usage():
+    for day in sorted(db_c, key=itemgetter('datetime')):
+        netto = day['usage']['consumption'] - day['usage']['production']
+        print('{:<{dfill}} {:>{ufill}.3f} kWh'.format(
+            day['datetime'].strftime('%Y-%m-%d %H:%M'), netto,
+            dfill=DATE_COL_LEN, ufill=USAGE_COL_LEN,
+        ))
 
 if __name__ == '__main__':
-    list_usage()
+    print('{d:<{dfill}} {u:<{ufill}}'.format(
+        d='Date',
+        u='Netto usage',
+        dfill=DATE_COL_LEN, ufill=USAGE_COL_H_LEN,
+    ))
+    print('='*(DATE_COL_LEN + USAGE_COL_H_LEN))
+    list_month_usage()
+    list_day_usage()
+    list_current_usage()
+

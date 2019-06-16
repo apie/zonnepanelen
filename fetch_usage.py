@@ -35,7 +35,6 @@ def fetch_usage():
       token = response.json()['access_token']
       expires = response.json()['.expires']
       save_in_db(token, datetime.datetime(*parsedate(expires)[:6]))
-      print('logged in')
     response = session.get(USAGE_API_URL, headers={'sso-token': token})
     response.raise_for_status()
     return response.json()
