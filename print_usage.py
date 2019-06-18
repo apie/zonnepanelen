@@ -25,12 +25,13 @@ def list_day_usage():
         ))
 
 def list_current_usage():
-    for day in sorted(db_c, key=itemgetter('datetime')):
+    # Return latest record of current usage
+    for day in sorted(db_c, key=itemgetter('datetime'), reverse=True):
         netto = day['usage']['consumption'] - day['usage']['production']
-        print('{:<{dfill}} {:>{ufill}.3f} kWh'.format(
+        return '{:<{dfill}} {:>{ufill}.3f} kWh'.format(
             day['datetime'].strftime('%Y-%m-%d %H:%M'), netto,
             dfill=DATE_COL_LEN, ufill=USAGE_COL_LEN,
-        ))
+        )
 
 if __name__ == '__main__':
     print('{d:<{dfill}} {u:<{ufill}}'.format(
@@ -41,5 +42,5 @@ if __name__ == '__main__':
     print('='*(DATE_COL_LEN + USAGE_COL_H_LEN))
     list_month_usage()
     list_day_usage()
-    list_current_usage()
+    print(list_current_usage())
 

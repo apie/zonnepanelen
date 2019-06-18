@@ -1,3 +1,4 @@
 *.db
 credentials.py
 __pycache__/
+bot_config.py
