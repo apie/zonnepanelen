@@ -28,7 +28,7 @@ def list_current_usage():
     # Return latest record of current usage
     for day in sorted(db_c, key=itemgetter('datetime'), reverse=True):
         netto = day['usage']['consumption'] - day['usage']['production']
-        return '{:<{dfill}} {:>{ufill}.3f} kWh'.format(
+        return '{:<{dfill}} {:>{ufill}.3f} kW'.format(
             day['datetime'].strftime('%Y-%m-%d %H:%M'), netto,
             dfill=DATE_COL_LEN, ufill=USAGE_COL_LEN,
         )
