@@ -12,7 +12,7 @@ USAGE_COL_H_LEN = USAGE_COL_LEN + 5
 today = date.today()
 
 def list_month_usage():
-    one_year_ago = today - timedelta(days=365)
+    one_year_ago = today - timedelta(days=365) - timedelta(days=32)
     for day in sorted(db_m("date") > one_year_ago, key=itemgetter('date')):
         c, p = day['usage']['accumulatedConsumption'], day['usage']['accumulatedProduction']
         print('{:<{dfill}} {:>{ufill}.0f} kWh'.format(
